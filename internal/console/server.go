@@ -7,10 +7,15 @@ import (
 
 	"github.com/tubagusmf/log-troubleshoot-be/db"
 	"github.com/tubagusmf/log-troubleshoot-be/internal/config"
+	"github.com/tubagusmf/log-troubleshoot-be/internal/repository"
+	"github.com/tubagusmf/log-troubleshoot-be/internal/usecase"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+
+	handlerHttp "github.com/tubagusmf/log-troubleshoot-be/internal/delivery/http"
 )
 
 func init() {
@@ -34,20 +39,17 @@ func httpServer(cmd *cobra.Command, args []string) {
 	}
 	defer sqlDB.Close()
 
-	// userRepo := repository.NewUserRepo(postgresDB)
-	// taskRepo := repository.NewTaskRepo(postgresDB)
-	// userUsecase := usecase.NewUserUsecase(userRepo)
-	// taskUsecase := usecase.NewTaskUsecase(taskRepo)
+	userRepo := repository.NewUserRepo(postgresDB)
+	userUsecase := usecase.NewUserUsecase(userRepo)
 
 	e := echo.New()
 
-	// handlerHttp.NewUserHandler(e, userUsecase)
-	// handlerHttp.NewTaskHandler(e, taskUsecase)
+	handlerHttp.NewUserHandler(e, userUsecase)
 
-	// e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-	// 	AllowOrigins: []string{"http://localhost:5173"},
-	// 	AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
-	// }))
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:5173"},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
+	}))
 
 	var wg sync.WaitGroup
 	errCh := make(chan error, 2)
