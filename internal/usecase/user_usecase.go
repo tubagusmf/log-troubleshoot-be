@@ -135,13 +135,13 @@ func (u *UserUsecase) Create(ctx context.Context, in model.CreateUserInput) (tok
 		return
 	}
 
-	acceesToken, err := helper.GenerateToken(*newUser)
+	accessToken, err := helper.GenerateToken(*newUser)
 	if err != nil {
 		logger.Error(err)
 		return
 	}
 
-	return acceesToken, nil
+	return accessToken, nil
 }
 
 func (u *UserUsecase) Update(ctx context.Context, id int64, in model.UpdateUserInput) error {

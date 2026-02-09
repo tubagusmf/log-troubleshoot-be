@@ -118,7 +118,7 @@ func (handler *UserHandler) Update(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusUnauthorized)
 	}
 
-	log.Printf("Authenticated User ID: %d", claim.UserID)
+	// log.Printf("Authenticated User ID: %d", claim.UserID)
 
 	var body model.UpdateUserInput
 	if err := c.Bind(&body); err != nil {
@@ -149,7 +149,7 @@ func (handler *UserHandler) Delete(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusUnauthorized)
 	}
 
-	log.Printf("Authenticated User ID: %d", claim.UserID)
+	// log.Printf("Authenticated User ID: %d", claim.UserID)
 
 	err = handler.userUsecase.Delete(c.Request().Context(), id)
 	if err != nil {
