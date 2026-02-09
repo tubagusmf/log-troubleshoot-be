@@ -11,24 +11,6 @@ type ContextAuthKey string
 
 const BearerAuthKey ContextAuthKey = "BearerAuth"
 
-type CustomClaims struct {
-	UserID int64  `json:"user_id"`
-	Role   string `json:"role"`
-	jwt.RegisteredClaims
-}
-
-type User struct {
-	Id        int64      `json:"id"`
-	Name      string     `json:"name"`
-	CodeName  string     `json:"code_name"`
-	Username  string     `json:"username"`
-	Password  string     `json:"-"`
-	Role      string     `json:"role"`
-	CreatedAt time.Time  `json:"created_at"`
-	UpdatedAt time.Time  `json:"updated_at"`
-	DeletedAt *time.Time `json:"-"`
-}
-
 type IUserRepository interface {
 	FindAll(ctx context.Context, user User) ([]*User, error)
 	FindByID(ctx context.Context, id int64) (*User, error)
@@ -45,6 +27,24 @@ type IUserUsecase interface {
 	Create(ctx context.Context, in CreateUserInput) (token string, err error)
 	Update(ctx context.Context, id int64, in UpdateUserInput) error
 	Delete(ctx context.Context, id int64) error
+}
+
+type CustomClaims struct {
+	UserID int64  `json:"user_id"`
+	Role   string `json:"role"`
+	jwt.RegisteredClaims
+}
+
+type User struct {
+	Id        int64      `json:"id"`
+	Name      string     `json:"name"`
+	CodeName  string     `json:"code_name"`
+	Username  string     `json:"username"`
+	Password  string     `json:"-"`
+	Role      string     `json:"role"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at"`
+	DeletedAt *time.Time `json:"-"`
 }
 
 type LoginInput struct {
