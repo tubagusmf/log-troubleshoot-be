@@ -24,7 +24,7 @@ func CheckPasswordHash(password, hash string) bool {
 func GenerateToken(user model.User) (string, error) {
 	claims := model.CustomClaims{
 		UserID: user.Id,
-		Role:   user.Role, // 🔥 WAJIB
+		Role:   user.Role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
 		},
@@ -33,15 +33,6 @@ func GenerateToken(user model.User) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 }
-
-// func GenerateToken(userID int64) (strToken string, err error) {
-// 	expiredAt := time.Now().UTC().Add(config.JWTExp())
-// 	strToken, err = jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-// 		"exp":     expiredAt.Unix(),
-// 		"user_id": userID,
-// 	}).SignedString([]byte(config.JWTSigningKey()))
-// 	return
-// }
 
 func DecodeToken(token string, claim *model.CustomClaims) (err error) {
 	jwt.ParseWithClaims(token, claim, func(t *jwt.Token) (interface{}, error) {
