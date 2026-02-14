@@ -37,3 +37,7 @@ func JWTSigningKey() string {
 func JWTExp() time.Duration {
 	return viper.GetDuration("jwt.exp")
 }
+
+func GetString(key string) string {
+	return viper.GetString(key)
+}

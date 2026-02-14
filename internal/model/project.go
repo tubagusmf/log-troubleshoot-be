@@ -27,6 +27,7 @@ type IProjectRepository interface {
 	FindByID(ctx context.Context, id int64) (*Project, error)
 	Update(ctx context.Context, project Project) error
 	Delete(ctx context.Context, id int64) error
+	FindByName(ctx context.Context, name string) (*Project, error)
 }
 
 type IProjectUsecase interface {

@@ -30,6 +30,7 @@ type ILocationRepository interface {
 	Create(ctx context.Context, location Location) (*Location, error)
 	Update(ctx context.Context, location Location) error
 	Delete(ctx context.Context, id int64) error
+	FindByName(ctx context.Context, name string) (*Location, error)
 }
 
 type ILocationUsecase interface {

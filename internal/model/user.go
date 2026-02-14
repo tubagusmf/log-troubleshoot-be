@@ -36,6 +36,7 @@ type IUserRepository interface {
 	Create(ctx context.Context, user User) (*User, error)
 	Update(ctx context.Context, user User) error
 	Delete(ctx context.Context, id int64) error
+	FindByCodeName(ctx context.Context, codeName string) (*User, error)
 }
 
 type IUserUsecase interface {

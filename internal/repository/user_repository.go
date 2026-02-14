@@ -95,3 +95,19 @@ func (u *UserRepo) Delete(ctx context.Context, id int64) error {
 	}
 	return nil
 }
+
+func (r *UserRepo) FindByCodeName(ctx context.Context, codeName string) (*model.User, error) {
+	var user model.User
+	err := r.db.WithContext(ctx).
+		Where("code_name = ? AND deleted_at IS NULL", codeName).
+		First(&user).Error
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("user not found")
+		}
+		return nil, err
+	}
+
+	return &user, nil
+}

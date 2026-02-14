@@ -44,11 +44,34 @@ func httpServer(cmd *cobra.Command, args []string) {
 	deviceRepo := repository.NewDeviceRepo(postgresDB)
 	locationRepo := repository.NewLocationRepo(postgresDB)
 	workTypeRepo := repository.NewWorkTypeRepo(postgresDB)
+	troubleshootLogRepo := repository.NewTroubleshootLogRepo(postgresDB)
+
+	sheetRepo, err := repository.NewGoogleSheetRepository(
+		config.GetString("GOOGLE_CREDENTIAL"),
+		config.GetString("GOOGLE_SPREADSHEET_ID"),
+		config.GetString("GOOGLE_SHEET_NAME"),
+	)
+	if err != nil {
+		log.Fatalf("Failed to init Google Sheet: %v", err)
+	}
+
+	//debug
+	log.Println("Credential:", config.GetString("GOOGLE_CREDENTIAL"))
+	log.Println("Spreadsheet:", config.GetString("GOOGLE_SPREADSHEET_ID"))
+	log.Println("Sheet:", config.GetString("GOOGLE_SHEET_NAME"))
+
+	whatsappConsumerUsecase := usecase.NewWhatsAppConsumerUsecase(
+		userRepo,
+		troubleshootLogRepo,
+		sheetRepo,
+	)
+
 	userUsecase := usecase.NewUserUsecase(userRepo)
 	projectUsecase := usecase.NewProjectUsecase(projectRepo)
 	deviceUsecase := usecase.NewDeviceUsecase(deviceRepo)
 	locationUsecase := usecase.NewLocationUsecase(locationRepo)
 	workTypeUsecase := usecase.NewWorkTypeUsecase(workTypeRepo)
+	troubleshootLogUsecase := usecase.NewTroubleshootLogUsecase(troubleshootLogRepo)
 
 	e := echo.New()
 
@@ -57,6 +80,8 @@ func httpServer(cmd *cobra.Command, args []string) {
 	handlerHttp.NewDeviceHandler(e, deviceUsecase)
 	handlerHttp.NewLocationHandler(e, locationUsecase)
 	handlerHttp.NewWorkTypeHandler(e, workTypeUsecase)
+	handlerHttp.NewTroubleshootLogHandler(e, troubleshootLogUsecase)
+	handlerHttp.NewWhatsAppWebhookHandler(e, whatsappConsumerUsecase)
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"http://localhost:5173"},

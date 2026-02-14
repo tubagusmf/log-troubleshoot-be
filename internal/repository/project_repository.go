@@ -75,3 +75,17 @@ func (p *ProjectRepo) Delete(ctx context.Context, id int64) error {
 	}
 	return nil
 }
+
+func (r *ProjectRepo) FindByName(ctx context.Context, name string) (*model.Project, error) {
+	var project model.Project
+
+	err := r.db.WithContext(ctx).
+		Where("LOWER(name) = LOWER(?) AND deleted_at IS NULL", name).
+		First(&project).Error
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, errors.New("project not found")
+	}
+
+	return &project, err
+}

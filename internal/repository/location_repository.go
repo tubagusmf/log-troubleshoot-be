@@ -93,3 +93,17 @@ func (l *LocationRepo) Delete(ctx context.Context, id int64) error {
 
 	return nil
 }
+
+func (r *LocationRepo) FindByName(ctx context.Context, name string) (*model.Location, error) {
+	var location model.Location
+
+	err := r.db.WithContext(ctx).
+		Where("LOWER(name) = LOWER(?) AND deleted_at IS NULL", name).
+		First(&location).Error
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, errors.New("location not found")
+	}
+
+	return &location, err
+}
